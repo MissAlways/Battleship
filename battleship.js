@@ -1,18 +1,98 @@
-let sea = new Array(10);
-let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-let characters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const characters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+const ships = [5, 4, 3, 3, 2, 1];
 
-for (let i = 0; i < characters.length; i++) {
-    sea[i] = new Array(10);
+let player_attack_sea = create_empty_sea();
+let enemy_ship_sea = create_empty_sea();
+
+let is_marking = false
+let times_attacked = 0;
+
+function create_empty_sea() {
+    let empty_sea = new Array(10);
+    for (let i = 0; i < characters.length; i++) {
+        empty_sea[i] = new Array(10);
+    }
+    return empty_sea;
 }
 
 for (let x = 0; x < characters.length; x++) {
     for (let y = 0; y < numbers.length; y++) {
-        sea[x][y] = characters[x] + numbers[y];
+        player_attack_sea[x][y] = characters[x] + numbers[y];
     }
 }
 
-console.log(sea);
+for (let x = 0; x < characters.length; x++) {
+    for (let y = 0; y < numbers.length; y++) {
+        enemy_ship_sea[x][y] = "empty";
+    }
+}
+put_enemy_ships_to_sea();
+
+//Put enemy ships to positions
+//Todo randomization
+function put_enemy_ships_to_sea() {
+    let success = use_cells(0, 0, 5, true, enemy_ship_sea);
+    if (success !== false) {
+        enemy_ship_sea = success;
+    }
+    success = use_cells(0, 4, 4, false, enemy_ship_sea);
+    if (success !== false) {
+        enemy_ship_sea = success;
+    }
+    success = use_cells(4, 6, 3, true, enemy_ship_sea);
+    if (success !== false) {
+        enemy_ship_sea = success;
+    }
+    success = use_cells(7, 4, 3, true, enemy_ship_sea);
+    if (success !== false) {
+        enemy_ship_sea = success;
+    }
+    success = use_cells(4, 4, 2, true, enemy_ship_sea);
+    if (success !== false) {
+        enemy_ship_sea = success;
+    }
+    success = use_cells(9, 0, 1, true, enemy_ship_sea);
+    if (success !== false) {
+        enemy_ship_sea = success;
+    }
+}
+// starting coordinates, length of ship and is it horizontally
+function use_cells(x, y, l, is_horizontally, list) {
+    let is_placable = true
+    x = parseInt(x);
+    y = parseInt(y);
+    if (is_horizontally) {
+        for (let i = x; i < x + l; i++) {
+            if (list[i][y] !== "empty") {
+                is_placable = false;
+                console.log("failed to place");
+                return false
+            }
+        }
+        if (is_placable) {
+            for (let i = x; i < x + l; i++) {
+                list[i][y] = "RESERVED"
+            }
+        }
+    } else {
+        for (let i = y; i < y + l; i++) {
+            if (list[x][i] !== "empty") {
+                is_placable = false;
+                console.log("failed to place");
+                return false;
+            }
+        }
+        if (is_placable) {
+            for (let i = y; i < y + l; i++) {
+                list[x][i] = "RESERVED";
+            }
+        }
+
+    }
+
+    return list;
+}
 
 const game_div = document.getElementById('game');
 const game_table = document.createElement("table");
@@ -42,7 +122,11 @@ for (let y = 0; y < numbers.length; y++) {
     for (let x = 0; x < characters.length; x++) {
         const cell = document.createElement("td");
         const cell_button = document.createElement("button");
-        cell_button.textContent = sea[x][y];
+        cell_button.textContent = player_attack_sea[x][y];
+        cell_button.style.backgroundColor = "#8bade1" // light blue
+        cell_button.addEventListener('click', () => {
+            on_cell_button_click(x, y, cell_button);
+        });
         cell.appendChild(cell_button);
         row.appendChild(cell);
     }
@@ -50,7 +134,41 @@ for (let y = 0; y < numbers.length; y++) {
 }
 
 game_table.appendChild(game_table_body);
-game_div.appendChild(game_table)const color_description = document.getElementById('color_description');
+game_div.appendChild(game_table);
+
+function on_cell_button_click(x, y, btn) {
+    if (is_marking) {
+        btn.style.backgroundColor = "#57423f"; //brown
+        return;
+    }
+    times_attacked++;
+    if (enemy_ship_sea[x][y] === "RESERVED") {
+        btn.style.backgroundColor = "#d13035"; //red
+        btn.textContent = "";
+        enemy_ship_sea[x][y] = "BROKEN";
+        if (is_won()) {
+            document.getElementById("game_won1").textContent = "Congratulations!";
+            document.getElementById("game_won2").textContent = "Needed " + times_attacked + " to win game!";
+            game_div.remove(game_table);
+        }
+    }
+    else {
+        btn.style.backgroundColor = "#647899"; //dark blue
+        btn.textContent = "";
+    }
+    btn.disabled = true;
+}
+
+function is_won() {
+    for (let x = 0; x < characters.length; x++) {
+        for (let y = 0; y < numbers.length; y++) {
+            if (enemy_ship_sea[x][y] === "RESERVED") {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 const toggle_marks_button = document.getElementById('toggle_marks_button');
 
