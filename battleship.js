@@ -50,4 +50,29 @@ for (let y = 0; y < numbers.length; y++) {
 }
 
 game_table.appendChild(game_table_body);
-game_div.appendChild(game_table)
+game_div.appendChild(game_table)const color_description = document.getElementById('color_description');
+
+const color_description = document.getElementById('color_description');
+
+const red_color_button = document.createElement("button");
+red_color_button.textContent = "Ship was hit";
+red_color_button.style.backgroundColor = "#d13035"
+
+const sea_color_button = document.createElement("button");
+sea_color_button.textContent = "Sea where might be enemy ships";
+sea_color_button.style.backgroundColor = "#8bade1"
+
+const dark_sea_color_button = document.createElement("button");
+dark_sea_color_button.textContent = "Sea where is no enemy ships";
+dark_sea_color_button.style.backgroundColor = "#647899"
+
+const own_mark_color_button = document.createElement("button");
+own_mark_color_button.textContent = "Own marks";
+own_mark_color_button.style.backgroundColor = "#57423f"
+own_mark_color_button.style.color = "white"
+
+
+color_description.appendChild(red_color_button);
+color_description.appendChild(sea_color_button);
+color_description.appendChild(dark_sea_color_button);
+color_description.appendChild(own_mark_color_button);
