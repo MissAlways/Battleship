@@ -52,6 +52,18 @@ for (let y = 0; y < numbers.length; y++) {
 game_table.appendChild(game_table_body);
 game_div.appendChild(game_table)const color_description = document.getElementById('color_description');
 
+const toggle_marks_button = document.getElementById('toggle_marks_button');
+
+toggle_marks_button.addEventListener('click', () => {
+    is_marking = !is_marking
+    if (is_marking) {
+        toggle_marks_button.textContent = "Attack mode";
+    }
+    else {
+        toggle_marks_button.textContent = "Own Marks mode";
+    }
+})
+
 const color_description = document.getElementById('color_description');
 
 const red_color_button = document.createElement("button");
